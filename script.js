@@ -213,32 +213,38 @@
         }
 
         // La eximición sigue dependiendo de la presentación
-        evaluarObjetivo(OBJ_EXIMIR, eximicion, notaAcumulada, pondRestante, lim);
+        evaluarObjetivo(OBJ_EXIMIR, eximicion, notaAcumulada, pondRestante, sumaPond, lim);
 
         // Y el examen que necesitas si no te eximes
         evaluarExamen(NP, completo, aprobacion, eximicion, lim);
       } else {
         resExamen.hidden = true;
-        evaluarObjetivo(OBJ_APROBAR, aprobacion, notaAcumulada, pondRestante, lim);
-        evaluarObjetivo(OBJ_EXIMIR,  eximicion,  notaAcumulada, pondRestante, lim);
+        evaluarObjetivo(OBJ_APROBAR, aprobacion, notaAcumulada, pondRestante, sumaPond, lim);
+        evaluarObjetivo(OBJ_EXIMIR,  eximicion,  notaAcumulada, pondRestante, sumaPond, lim);
       }
 
       guardar();
     }
 
-    function evaluarObjetivo(cfg, objetivo, notaAcumulada, pondRestante, lim) {
+    function evaluarObjetivo(cfg, objetivo, notaAcumulada, pondRestante, sumaPond, lim) {
       if (isNaN(objetivo)) { pintar(cfg.id, cfg.etiqueta, "—", "neutro", ""); return; }
+
+      // Sin ponderaciones válidas no hay nada que promediar
+      if (sumaPond <= EPS) { pintar(cfg.id, cfg.etiqueta, "—", "neutro", "Ingresa las ponderaciones"); return; }
+
+      // Base real sobre la que se promedian las notas (no asumimos 100%)
+      const factor = sumaPond / 100;
 
       // Ya no quedan evaluaciones pendientes -> nota final definitiva
       if (pondRestante <= EPS) {
-        const final = redondear(notaAcumulada, lim.decimales);
+        const final = redondear(notaAcumulada / factor, lim.decimales);
         const logra = final >= objetivo - EPS;
         pintar(cfg.id, "Nota final", fmt(final, lim.decimales), logra ? "ok" : "mal", logra ? cfg.ok : cfg.no);
         return;
       }
 
-      // Promedio uniforme necesario en lo que queda
-      const necesaria = (objetivo - notaAcumulada) / (pondRestante / 100);
+      // Promedio uniforme necesario en lo que queda (normalizado a la ponderación real)
+      const necesaria = (objetivo * factor - notaAcumulada) / (pondRestante / 100);
 
       if (necesaria <= lim.min + EPS) {
         pintar(cfg.id, cfg.etiqueta, "¡Asegurado!", "ok", "Lo logras con cualquier nota");
