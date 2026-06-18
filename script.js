@@ -98,7 +98,7 @@
         '</div>' +
         '<div class="celda celda-nota">' +
           '<span class="etiqueta-mini">Nota</span>' +
-          '<input type="number" class="nota" placeholder="—" inputmode="decimal" enterkeyhint="done">' +
+          '<input type="text" class="nota" placeholder="—" inputmode="decimal" enterkeyhint="done">' +
         '</div>' +
         '<button type="button" class="btn-eliminar" aria-label="Eliminar evaluación">✕</button>';
 
@@ -422,7 +422,13 @@
       calcular();
     });
 
-    document.addEventListener("input", calcular);
+    document.addEventListener("input", function (e) {
+      const t = e.target;
+      if (t && (t.classList.contains("nota") || t === aprobacionInp || t === eximicionInp)) {
+        if (t.value.indexOf(",") !== -1) t.value = t.value.replace(/,/g, ".");
+      }
+      calcular();
+    });
 
     // === Inicio ===
     const guardado = cargar();
