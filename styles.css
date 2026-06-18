@@ -1,0 +1,400 @@
+/* === Variables: modo claro === */
+    :root {
+      --fondo: #fbfbfd;
+      --tarjeta: #ffffff;
+      --campo: #f5f5f7;
+      --texto: #1d1d1f;
+      --texto-suave: #6e6e73;
+      --borde: #d2d2d7;
+      --acento: #0071e3;
+      --radio: 18px;
+      --radio-campo: 12px;
+      --sombra: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --ok: #1d9e54;
+      --mal: #e0362c;
+      --aviso: #9a5b00;
+      --aviso-fondo: rgba(255, 159, 10, 0.16);
+    }
+
+    /* === Modo oscuro automático === */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fondo: #000000;
+        --tarjeta: #1c1c1e;
+        --campo: #2c2c2e;
+        --texto: #f5f5f7;
+        --texto-suave: #98989d;
+        --borde: #38383a;
+        --acento: #2997ff;
+        --sombra: 0 4px 24px rgba(0, 0, 0, 0.5);
+        --ok: #30d158;
+        --mal: #ff453a;
+        --aviso: #ffd60a;
+        --aviso-fondo: rgba(255, 159, 10, 0.18);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "SF Pro Text", system-ui, sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+      line-height: 1.47;
+      -webkit-font-smoothing: antialiased;
+      padding: 48px 20px calc(80px + env(safe-area-inset-bottom));
+    }
+
+    main { max-width: 580px; margin: 0 auto; }
+
+    /* === Encabezado === */
+    header { text-align: center; margin-bottom: 36px; }
+
+    h1 {
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+    }
+
+    header p {
+      margin-top: 12px;
+      font-size: clamp(1rem, 3.5vw, 1.1rem);
+      color: var(--texto-suave);
+      letter-spacing: -0.01em;
+    }
+
+    /* === Tarjetas === */
+    .tarjeta {
+      background: var(--tarjeta);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+      padding: 26px;
+      margin-bottom: 20px;
+    }
+
+    .tarjeta h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--texto-suave);
+      margin-bottom: 18px;
+    }
+
+    /* === Campos de configuración === */
+    .campo { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+    .campo:last-of-type { margin-bottom: 0; }
+
+    .campo label { font-size: 0.9rem; font-weight: 500; color: var(--texto-suave); }
+
+    /* Toggle estilo switch */
+    .campo-toggle { flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+    .switch { position: relative; display: inline-block; width: 51px; height: 31px; flex: none; }
+    .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .switch .riel { position: absolute; inset: 0; background: var(--borde); border-radius: 999px; transition: background .25s ease; }
+    .switch .riel::before {
+      content: ""; position: absolute; top: 2px; left: 2px;
+      width: 27px; height: 27px; background: #fff; border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,.3);
+      transition: transform .25s cubic-bezier(.2,.7,.3,1);
+    }
+    .switch input:checked + .riel { background: var(--ok); }
+    .switch input:checked + .riel::before { transform: translateX(20px); }
+    .switch input:focus-visible + .riel { box-shadow: 0 0 0 4px color-mix(in srgb, var(--acento) 18%, transparent); }
+
+    /* Dos campos lado a lado */
+    .campo.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .campo.dos > div { display: flex; flex-direction: column; gap: 7px; }
+
+    /* Reveal de la configuración de examen */
+    #config-examen { margin-bottom: 18px; }
+    #config-examen.aparece { animation: aparecer .28s cubic-bezier(.2,.7,.3,1); }
+
+    /* Para que el atributo hidden funcione sobre los resultados (que son flex) */
+    .resultado[hidden] { display: none; }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      font: inherit;
+      color: var(--texto);
+      background: var(--campo);
+      border: 1.5px solid transparent;
+      border-radius: var(--radio-campo);
+      padding: 12px 14px;
+      width: 100%;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease, transform .12s ease;
+    }
+
+    /* iOS no agranda al enfocar si el font-size es >= 16px */
+    input[type="number"], input[type="text"], select { font-size: 16px; }
+
+    input::placeholder { color: var(--texto-suave); opacity: 0.55; }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--acento);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--acento) 16%, transparent);
+    }
+
+    /* Campo con check (nota válida ya ingresada) */
+    input.valido { border-color: color-mix(in srgb, var(--ok) 55%, transparent); }
+
+    /* Campo fuera de rango */
+    input.invalido {
+      border-color: var(--mal);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--mal) 14%, transparent);
+      animation: temblor .3s ease;
+    }
+
+    @keyframes temblor {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    /* === Filas de evaluaciones === */
+    .fila-cabecera, .fila { display: grid; align-items: center; gap: 10px; }
+
+    .fila-cabecera {
+      grid-template-columns: 1.4fr 1fr 1fr 34px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--texto-suave);
+      padding: 0 2px;
+      margin-bottom: 10px;
+    }
+
+    .fila {
+      grid-template-columns: 1.4fr 1fr 1fr 34px;
+      margin-bottom: 10px;
+    }
+
+    .etiqueta-mini { display: none; }
+
+    .input-sufijo { position: relative; }
+    .input-sufijo .sufijo {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--texto-suave);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+    .input-sufijo input { padding-right: 28px; }
+
+    .fila.entrando { animation: aparecer .28s cubic-bezier(.2,.7,.3,1); }
+    .fila.saliendo { animation: desaparecer .22s ease forwards; pointer-events: none; }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(-8px) scale(.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes desaparecer {
+      to { opacity: 0; transform: translateX(14px) scale(.97); }
+    }
+
+    /* === Barra de ponderación total === */
+    .barra-pond { margin-top: 16px; }
+    .barra-pond .barra-info {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--texto-suave);
+      margin-bottom: 7px;
+    }
+    .barra-pond .barra-info b { color: var(--texto); font-weight: 600; }
+    .barra-pista {
+      height: 8px; border-radius: 999px;
+      background: var(--campo); overflow: hidden;
+    }
+    .barra-relleno {
+      height: 100%; width: 0%;
+      border-radius: 999px;
+      background: var(--acento);
+      transition: width .45s cubic-bezier(.2,.7,.3,1), background .3s ease;
+    }
+    .barra-relleno.completa { background: var(--ok); }
+    .barra-relleno.exceso { background: var(--mal); }
+
+    /* === Botones === */
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .2s ease, opacity .2s ease;
+    }
+    button:active { transform: scale(.96); }
+
+    #agregar {
+      margin-top: 18px;
+      width: 100%;
+      background: var(--acento);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 980px;
+      padding: 14px;
+    }
+    #agregar:hover { opacity: .9; }
+
+    .btn-eliminar {
+      background: transparent;
+      color: var(--texto-suave);
+      font-size: 1.1rem;
+      line-height: 1;
+      border-radius: 50%;
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      justify-self: center;
+    }
+    .btn-eliminar:hover { background: var(--campo); color: var(--mal); }
+
+    /* === Resumen === */
+    .stats { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 22px; }
+    .stats > div { font-size: 0.8rem; color: var(--texto-suave); }
+    .stats b {
+      display: block; margin-top: 4px;
+      font-size: 1.5rem; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--texto);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .resultado {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: var(--radio-campo);
+      background: var(--campo);
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: background .25s ease;
+    }
+    .resultado:last-of-type { margin-bottom: 0; }
+
+    .resultado-txt { display: flex; flex-direction: column; gap: 3px; }
+    .resultado .etiqueta { font-size: 1rem; font-weight: 600; color: var(--texto); }
+    .resultado .sub { font-size: 0.78rem; color: var(--texto-suave); }
+
+    .resultado .valor {
+      font-size: 1.6rem; font-weight: 600;
+      letter-spacing: -0.02em; text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      transition: color .25s ease;
+    }
+
+    .estado-ok     .valor { color: var(--ok); }
+    .estado-mal    .valor { color: var(--mal); }
+    .estado-neutro .valor { color: var(--acento); }
+
+    .estado-ok  { background: color-mix(in srgb, var(--ok) 10%, var(--campo)); }
+    .estado-mal { background: color-mix(in srgb, var(--mal) 9%, var(--campo)); }
+
+    .resultado.pulso { animation: pulso .4s cubic-bezier(.2,.7,.3,1); }
+    @keyframes pulso {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.025); }
+      100% { transform: scale(1); }
+    }
+
+    /* Destello al lograr un objetivo */
+    .resultado.festejo::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 50%,
+                  color-mix(in srgb, var(--ok) 45%, transparent), transparent 60%);
+      animation: destello .7s ease forwards;
+      pointer-events: none;
+    }
+    @keyframes destello { from { opacity: .9; } to { opacity: 0; } }
+
+    .chispa {
+      position: absolute; width: 7px; height: 7px; border-radius: 2px;
+      pointer-events: none; will-change: transform, opacity;
+    }
+
+    /* === Aviso === */
+    .aviso {
+      font-size: 0.88rem;
+      padding: 12px 16px;
+      border-radius: var(--radio-campo);
+      margin-bottom: 18px;
+      background: var(--aviso-fondo);
+      color: var(--aviso);
+    }
+
+    /* === Ayuda y pie === */
+    .ayuda { margin-top: 16px; font-size: 0.82rem; line-height: 1.5; color: var(--texto-suave); }
+
+    .pie { text-align: center; margin-top: 6px; }
+    #borrar {
+      background: transparent; color: var(--mal);
+      font-size: 0.9rem; font-weight: 500;
+      border-radius: 980px; padding: 10px 20px;
+    }
+    #borrar:hover { opacity: .65; }
+
+    /* ============================================ */
+    /* === MÓVIL: cada evaluación es una tarjeta === */
+    /* ============================================ */
+    @media (max-width: 540px) {
+      body { padding: 36px 16px calc(72px + env(safe-area-inset-bottom)); }
+      .tarjeta { padding: 22px 18px; }
+
+      .fila-cabecera { display: none; }
+
+      .fila {
+        position: relative;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "nombre nombre"
+          "pond   nota";
+        gap: 12px;
+        padding: 16px 14px;
+        background: var(--campo);
+        border-radius: var(--radio-campo);
+        margin-bottom: 12px;
+      }
+      @media (prefers-color-scheme: dark) {
+        .fila { background: #242426; }
+      }
+
+      .celda-nombre { grid-area: nombre; }
+      .celda-pond   { grid-area: pond; }
+      .celda-nota   { grid-area: nota; }
+
+      .celda { display: flex; flex-direction: column; gap: 6px; }
+      .etiqueta-mini {
+        display: block;
+        font-size: 0.7rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: var(--texto-suave);
+      }
+
+      .fila input { background: var(--tarjeta); }
+      @media (prefers-color-scheme: dark) {
+        .fila input { background: #1c1c1e; }
+      }
+
+      .celda-nombre .nombre { padding-right: 44px; }
+      .btn-eliminar { position: absolute; top: 12px; right: 10px; }
+
+      .stats { gap: 18px; }
+      .resultado { padding: 16px; }
+      .resultado .valor { font-size: 1.5rem; }
+    }
+
+    /* === Accesibilidad: respetar reduce-motion === */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+      }
+    }

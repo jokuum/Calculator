@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <title>Calculadora de Notas</title>
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <main>
+    <header>
+      <h1>Calculadora de Notas</h1>
+      <p>Descubre qué nota necesitas para aprobar y eximirte.</p>
+    </header>
+
+    <section class="tarjeta">
+      <h2>Configuración</h2>
+
+      <div class="campo">
+        <label for="escala">Escala de notas</label>
+        <select id="escala">
+          <option value="7">1.0 – 7.0</option>
+          <option value="100">0 – 100</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="aprobacion">Nota para aprobar</label>
+        <input type="number" id="aprobacion" value="4.0" step="0.1" inputmode="decimal">
+      </div>
+
+      <div class="campo">
+        <label for="eximicion">Nota para eximirse</label>
+        <input type="number" id="eximicion" value="5.0" step="0.1" inputmode="decimal">
+      </div>
+
+      <div class="campo campo-toggle">
+        <label for="tiene-examen">El ramo tiene examen</label>
+        <label class="switch">
+          <input type="checkbox" id="tiene-examen">
+          <span class="riel"></span>
+        </label>
+      </div>
+
+      <div id="config-examen" hidden>
+        <div class="campo dos">
+          <div>
+            <label for="pres-pct">% Presentación</label>
+            <input type="number" id="pres-pct" value="60" min="0" max="100" inputmode="numeric">
+          </div>
+          <div>
+            <label for="exam-pct">% Examen</label>
+            <input type="number" id="exam-pct" value="40" min="0" max="100" inputmode="numeric">
+          </div>
+        </div>
+        <p class="ayuda">
+          Tu nota final será la presentación por su porcentaje más el examen por el suyo.
+          Los dos porcentajes suman 100%.
+        </p>
+      </div>
+
+      <p class="ayuda">
+        Las notas para aprobar y eximirse cambian según cada universidad y carrera.
+        Edítalas aquí para que coincidan con tu reglamento.
+      </p>
+    </section>
+
+    <section class="tarjeta">
+      <h2>Evaluaciones</h2>
+
+      <div class="fila-cabecera">
+        <span>Nombre</span>
+        <span>Ponderación %</span>
+        <span>Nota</span>
+        <span></span>
+      </div>
+
+      <div id="evaluaciones"></div>
+
+      <button id="agregar" type="button">+ Agregar evaluación</button>
+
+      <div class="barra-pond">
+        <div class="barra-info">
+          <span>Ponderación total</span>
+          <b id="barra-texto">0%</b>
+        </div>
+        <div class="barra-pista">
+          <div class="barra-relleno" id="barra-relleno"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tarjeta" id="resumen">
+      <h2>Resumen</h2>
+
+      <div id="aviso" class="aviso" hidden></div>
+
+      <div class="stats">
+        <div>Nota acumulada<b id="stat-acumulada">—</b></div>
+        <div>Ponderación usada<b id="stat-usada">—</b></div>
+        <div>Ponderación restante<b id="stat-restante">—</b></div>
+      </div>
+
+      <div class="resultado" id="res-aprobar">
+        <div class="resultado-txt">
+          <span class="etiqueta">Para aprobar</span>
+          <span class="sub"></span>
+        </div>
+        <span class="valor">—</span>
+      </div>
+
+      <div class="resultado" id="res-eximir">
+        <div class="resultado-txt">
+          <span class="etiqueta">Para eximirte</span>
+          <span class="sub"></span>
+        </div>
+        <span class="valor">—</span>
+      </div>
+
+      <div class="resultado" id="res-examen" hidden>
+        <div class="resultado-txt">
+          <span class="etiqueta">Examen para aprobar</span>
+          <span class="sub"></span>
+        </div>
+        <span class="valor">—</span>
+      </div>
+    </section>
+
+    <div class="pie">
+      <button id="borrar" type="button">Borrar todo</button>
+    </div>
+  </main>
+
+</body>
+</html>
